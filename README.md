@@ -1,8 +1,4 @@
-# Laravel To-Do App with Profile and Authentication Enhancements
-
-This Laravel project enhances a basic To-Do List application by adding full user profile management and input validation for registration and login.
-
----
+# Laravel Project
 
 ## Enhancements Made
 
