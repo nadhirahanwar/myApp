@@ -1,52 +1,80 @@
-# Laravel To-Do App with Profile Enhancements
+# Laravel To-Do App with Profile and Authentication Enhancements
 
-This Laravel project extends a basic To-Do List application with enhanced user profile functionality.
+This Laravel project enhances a basic To-Do List application by adding full user profile management and input validation for registration and login.
 
 ---
 
-## 🧩 Enhancements
+## Enhancements Made
 
-### 🔧 Model (User.php)
-- Added fields:
+This project includes modifications to the Laravel MVC structure: **Model**, **View**, and **Controller**.
+
+---
+
+### 1. Model (`User.php`)
+**Files modified:**
+- `app/Models/User.php`
+- `database/migrations/2025_04_18_045321_add_profile_fields_to_users_table.php`
+
+**Enhancements:**
+- Added new fields to the `users` table:
   - `nickname`
   - `avatar`
   - `phone`
   - `city`
-- Updated `$fillable` to allow these fields to be saved
-
-### 🎨 View (Blade Templates)
-- `profile.blade.php` for user profile page
-  - View-only and edit mode
-  - Avatar displayed centered above the form
-- `layouts/app.blade.php`
-  - Avatar shown in the top-right navbar with fallback image
-  - Nickname replaces default user name
-
-### 🧠 Controller
-- `ProfileController.php`
-  - Handles viewing, editing, uploading avatar, updating password, and deleting account
-  - Avatar stored in `public/storage/avatars`
-  - Uses `$request->all()` and `$user->update()` (same style as TodoController)
+- Migration file created to update the database schema.
+- `$fillable` array in the `User` model was updated to include these fields.
 
 ---
 
-## 📁 Modified Files
-
-- `app/Http/Controllers/ProfileController.php`
-- `app/Models/User.php`
+### 2. Views
+**Files created/modified:**
 - `resources/views/profile.blade.php`
 - `resources/views/layouts/app.blade.php`
-- `database/migrations/...` (users table columns)
-- `public/images/default-avatar.png`
+- `resources/views/auth/register.blade.php`
+- `resources/views/auth/login.blade.php`
+
+**Enhancements:**
+- `profile.blade.php`:
+  - View mode shows user info: nickname, email, phone, city, avatar
+  - Edit mode allows updating info and uploading avatar
+  - Password change field (optional)
+  - Delete account button
+- `layouts/app.blade.php`:
+  - Displays user `nickname` in the top-right navigation
+  - Shows avatar next to the nickname
+- `register.blade.php` and `login.blade.php`:
+  - Input validation using form request classes
 
 ---
 
-## 🚀 How to Run Locally
+### 3. Controller and Routing
+**Files created/modified:**
+- `app/Http/Controllers/ProfileController.php`
+- `routes/web.php`
 
-```bash
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan serve
+**Enhancements:**
+- Created `ProfileController` with methods:
+  - `show`, `edit`, `update`, and `destroy`
+- Routes added to `web.php` to handle profile viewing, updating, and deleting:
+  - `/profile` (view)
+  - `/profile/edit` (edit)
+  - `/profile/update` (update)
+  - `/profile/destroy` (delete)
+
+---
+
+### 4. Form Request Validation
+**Files created:**
+- `app/Http/Requests/RegisterRequest.php`
+- `app/Http/Requests/LoginRequest.php`
+
+**Enhancements:**
+- Registration and login fields validated using Laravel Form Request classes
+- Name fields validated using regex to allow only A–Z and a–z characters
+
+---
+
+## GitHub Repository URL
+
+[https://github.com/nadhirahanwar/myApp](https://github.com/nadhirahanwar/myApp)
 
