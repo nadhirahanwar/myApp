@@ -66,8 +66,8 @@
 ---
 ## Screenshots
 
-### 1. Welcom Page
-![Welcome](public/images/welcome.png)
+### 1. Welcome Page
+![Welcome](https://github.com/nadhirahanwar/myApp/raw/main/public/images/welcome.png)
 
 ### 2. Register Page
 ![Register](public/images/register.png)
