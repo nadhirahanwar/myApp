@@ -64,6 +64,26 @@
 - Name fields validated using regex to allow only A–Z and a–z characters
 
 ---
+## Screenshots
+
+### 1. Welcom Page
+![Welcome](public/images/welcome.png)
+
+### 2. Register Page
+![Register](public/images/register.png)
+
+### 3. Login Page
+![Login](public/images/login.png)
+
+### 4. Todo Page
+![Todo](public/images/todo.png)
+
+### 5. Profile Page
+![Profile](public/images/[profile.png)
+
+### 6. Edit Profile Page
+![EditProfile](public/images/[editprofile.png)
+
 
 ## GitHub Repository URL
 
