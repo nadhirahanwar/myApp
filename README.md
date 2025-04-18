@@ -12,8 +12,8 @@
   - `avatar`
   - `phone`
   - `city`
-- Migration file created to update the database schema.
-- `$fillable` array in the `User` model was updated to include these fields.
+  - `change password`
+- Migration file created to update the database.
 
 ---
 
