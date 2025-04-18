@@ -79,10 +79,10 @@
 ![Todo](public/images/todo.png)
 
 ### 5. Profile Page
-![Profile](public/images/[profile.png)
+![Profile](public/images/profile.png)
 
 ### 6. Edit Profile Page
-![EditProfile](public/images/[editprofile.png)
+![EditProfile](public/images/editprofile.png)
 
 
 ## GitHub Repository URL
