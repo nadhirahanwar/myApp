@@ -1,11 +1,6 @@
 # Laravel Project
 
-## Enhancements Made
-
-This project includes modifications to the Laravel MVC structure: **Model**, **View**, and **Controller**.
-
----
-
+## Enhancements 
 ### 1. Model (`User.php`)
 **Files modified:**
 - `app/Models/User.php`
