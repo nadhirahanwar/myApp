@@ -1,5 +1,6 @@
 # Laravel Project
 
+# Assignment 1
 ## Enhancements 
 ### 1. Model (`User.php`)
 **Files modified:**
@@ -84,8 +85,76 @@
 ### 6. Edit Profile Page
 ![EditProfile](public/images/editprofile.png)
 
+# Assignment 2
+### Enhancements
 
-## GitHub Repository URL
+#### 1. Multi-Factor Authentication (MFA)
+**Files modified/created:**
+- `app/Http/Controllers/Auth/LoginController.php`
+- `app/Models/User.php`
+- `resources/views/auth/verify-mfa.blade.php`
+- `routes/web.php`
+- `app/Actions/Fortify/CreateNewUser.php`
 
-[https://github.com/nadhirahanwar/myApp](https://github.com/nadhirahanwar/myApp)
+**Enhancements:**
+- Integrated **Multi-Factor Authentication (MFA)** using the **Laravel Fortify** package.
+- The user is required to verify through link sent to their email after they successfully log in with their username and password.
+- The code expires after **10 minutes**.
+- Added a **resend MFA link**.
+
+---
+
+### 2. Password Hashing with Salt (Bcrypt)
+**Files modified:**
+- `app/Models/User.php`
+- `config/hashing.php`
+- `app/Actions/Fortify/CreateNewUser.php`
+
+**Enhancements:**
+- Implemented **password hashing** using **Bcrypt**.
+- **Salts** are generated for each password during registration and stored in the `users` table.
+- The password and salt are concatenated and then hashed to provide an extra layer of security.
+
+---
+
+### 3. Rate Limiting for Login Attempts
+**Files modified:**
+- `app/Providers/RouteServiceProvider.php`
+- `routes/web.php`
+
+**Enhancements:**
+- Used **Laravel RateLimiter** to limit **login attempts to 3** within **a minute**.
+- After 3 failed login attempts, the user is temporarily blocked and must wait before trying again.
+  
+---
+
+### 4. User Registration Enhancements
+**Files modified/created:**
+- `app/Models/User.php`
+- `app/Actions/Fortify/CreateNewUser.php`
+
+**Enhancements:**
+- Added **salts** for passwords during user registration.
+- A **random alphanumeric salt** is generated for each user and stored in the `users` table.
+- The password is concatenated with the salt before being hashed using **Bcrypt**.
+
+---
+
+### 5. Views for MFA
+**Files created/modified:**
+- `resources/views/auth/verify-mfa.blade.php`
+
+**Enhancements:**
+- Created a **view for MFA verification**, where the user see after they logim.
+
+---
+
+### 6. Routes for MFA and Login
+**Files modified:**
+- `routes/web.php`
+
+**Enhancements:**
+- Created routes for **MFA verification**, **resending MFA codes**, and **updating user credentials after MFA verification**.
+
+
 
