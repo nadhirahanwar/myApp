@@ -156,5 +156,11 @@
 **Enhancements:**
 - Created routes for **MFA verification**, **resending MFA codes**, and **updating user credentials after MFA verification**.
 
+## Screenshots
+
+### 1. Verify
+![Verify](public/images/verify.png)
+
+
 
 
