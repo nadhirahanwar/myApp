@@ -157,8 +157,7 @@
 - Created routes for **MFA verification**, **resending MFA codes**, and **updating user credentials after MFA verification**.
 
 ## Screenshots
-
-### 1. Verify
+### 1. Verify MFA
 ![Verify](public/images/verify.png)
 
 
