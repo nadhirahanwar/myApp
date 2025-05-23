@@ -18,6 +18,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
+        $this->registerMiddleware();
+
         Route::middleware('web')
             ->group(base_path('routes/web.php'));
 
@@ -27,21 +29,29 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register custom middleware.
+     */
+    protected function registerMiddleware(): void
+    {
+        // role-based access control
+        Route::middleware('role', \App\Http\Middleware\CheckRole::class);
+    }
+
+    /**
      * Configure rate limiters for the application.
      */
-
-protected function configureRateLimiting(): void
-{
-    RateLimiter::for('login', function (Request $request) {
-        $email = (string) $request->input('email', 'guest');
-        return Limit::perMinute(1)
-            ->by(Str::lower($email) . '|' . $request->ip())
-            ->attempts(3)
-            ->response(function () {
-                return response('Too many login attempts. Please try again in 60 seconds.', 429);
-            });
-    });
-
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('login', function (Request $request) {
+            $email = (string) $request->input('email', 'guest');
+            return Limit::perMinute(1)
+                ->by(Str::lower($email) . '|' . $request->ip())
+                ->attempts(3)
+                ->response(function () {
+                    return response('Too many login attempts. Please try again in 60 seconds.', 429);
+                });
+        });
     }
 }
+
 

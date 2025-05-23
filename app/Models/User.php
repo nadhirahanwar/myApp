@@ -51,4 +51,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $dates = [
         'two_factor_expires_at',
     ];
+    public function roles()
+    {
+         return $this->belongsToMany(Role::class, 'user_roles', 'user_id', 'role_id');
+    }
+    public function permissions()
+    {
+        return $this->hasManyThrough(Permission::class, Role::class, 'role_id', 'permission_id');
+    }
 }

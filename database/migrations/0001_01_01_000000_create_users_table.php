@@ -35,6 +35,27 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+         // UserRoles table for RBAC
+        Schema::create('user_roles', function (Blueprint $table) {
+            $table->id('role_id');
+            $table->unsignedBigInteger('user_id');
+            $table->string('role_name');  // e.g., "admin", "user"
+            $table->string('description')->nullable();  // Description of the role
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
+
+        // RolePermissions table for RBAC
+        Schema::create('role_permissions', function (Blueprint $table) {
+            $table->id('permission_id');
+            $table->unsignedBigInteger('role_id');
+            $table->string('permission_name');  // e.g., "create", "read", "update", "delete"
+            $table->timestamps();
+
+            $table->foreign('role_id')->references('role_id')->on('user_roles')->onDelete('cascade');
+        });
+
     }
 
     /**
@@ -42,6 +63,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('role_permissions');
+        Schema::dropIfExists('user_roles');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

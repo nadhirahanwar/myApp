@@ -10,11 +10,21 @@
                 <div class="card-body">
                     @if (session('resent'))
                         <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
+
                         </div>
                     @endif
 
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
+                     <form method="POST" action="{{ route('mfa.verify') }}">
+                        @csrf
+                        <div class="form-group">
+                            <label for="code">{{ __('Enter the verification code sent to your email') }}</label>
+                            <input type="text" name="code" id="code" class="form-control" required autofocus>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            {{ __('Verify Code') }}
+                        </button>
+                    </form>
                     {{ __('If you did not receive the email') }},
                     <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
                         @csrf

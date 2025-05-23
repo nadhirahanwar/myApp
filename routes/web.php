@@ -11,22 +11,21 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Auth\Notifications\VerifyEmail;
 
-// 🌐 Default Welcome Page
 Route::get('/', function () {
     return view('welcome');
 });
 
-// 🛂 Authentication Routes
+// Authentication Routes
 Auth::routes();
 Route::post('register', [RegisterController::class, 'register']);
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->middleware('throttle:login');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// 📋 To-Do Resource
+// To-Do Resource
 Route::resource('/todo', TodoController::class);
 
-// 👤 Profile Routes (Only for Authenticated Users)
+// Profile Routes (Only for Authenticated Users)
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,12 +33,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// 🔐 MFA Verification View (After Login)
+//  MFA Verification View (After Login)
 Route::get('/verify-mfa', function () {
     return view('auth.verify-mfa');
 })->middleware('guest')->name('mfa.verify');
 
-// 🔐 Verify Submitted MFA Code
+//  Verify Submitted MFA Code
 Route::post('/verify-mfa', function (Request $request) {
     $request->validate([
         'code' => 'required|string',
@@ -64,12 +63,12 @@ Route::post('/verify-mfa', function (Request $request) {
     return redirect('/home');
 });
 
-// 🔁 Resend MFA Code (Optional)
-Route::post('/resend-mfa', function () {
+// Resend MFA Code
+    Route::post('/resend-mfa', function () {
     $user = User::find(session('pending_mfa_user_id'));
-    if ($user) {
-        $code = rand(100000, 999999);
-        $user->update([
+         if ($user) {
+         $code = rand(100000, 999999);
+         $user->update([
             'two_factor_code' => $code,
             'two_factor_expires_at' => now()->addMinutes(10),
         ]);
@@ -82,8 +81,15 @@ Route::post('/resend-mfa', function () {
     return back()->with('status', 'A new code has been sent to your email.');
 });
 
-// 🔑 Email Verification Resend Route
-Route::get('/email/verify/resend', function () {
+//  Email Verification Resend Route
+    Route::get('/email/verify/resend', function () {
     auth()->user()->sendEmailVerificationNotification();
     return back()->with('status', 'Verification email sent!');
 })->middleware('auth')->name('verification.resend');
+
+// Admin route
+Route::get('/admin/users', [AdminController::class, 'index'])->middleware('role:admin');
+
+// User route
+Route::get('/todo/create', [TodoController::class, 'create'])->middleware('role:user,create');
+

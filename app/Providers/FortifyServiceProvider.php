@@ -9,12 +9,12 @@ use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LoginResponse;
 use App\Http\Responses\CustomLoginResponse;
-
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -24,7 +24,6 @@ class FortifyServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
-
     }
 
     /**
@@ -38,27 +37,28 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
-        // ✅ 1. Rate limiting: Allow only 3 attempts per minute per user+IP
+        // 1. Rate Limiting for Login Attempts: Allow only 3 failed attempts per minute per user+IP
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
 
-            return Limit::perMinute(1)->by($throttleKey)->response(function () {
+            // Limit to 3 attempts per minute
+            return Limit::perMinute(3)->by($throttleKey)->response(function () {
                 return response('Too many login attempts. Please try again in a minute.', 429);
-            })->attempts(3);
+            });
         });
 
-        // Two-factor challenge rate limiting
+        // 2. Rate Limiting for MFA Verification Attempts: Allow only 5 attempts per user per minute
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
 
-        // ✅ 2. Register Fortify Views
+        // 3. Register Fortify Views
         Fortify::loginView(function () {
             return view('auth.login');
         });
 
         Fortify::registerView(function () {
-            return view('auth.registration');
+            return view('auth.register');
         });
 
         Fortify::twoFactorChallengeView(function () {
@@ -67,6 +67,23 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::confirmPasswordView(function () {
             return view('auth.confirm-password');
+        });
+
+        // 4. MFA Email Code Logic
+        Fortify::sendTwoFactorCode(function ($user) {
+            // Generate a random 6-digit MFA code
+            $code = rand(100000, 999999);
+
+            // Store the code and expiration time in the user's record
+            $user->update([
+                'two_factor_code' => $code,
+                'two_factor_expires_at' => now()->addMinutes(10),  // 10-minute expiration
+            ]);
+
+            // Send the MFA code via email
+            Mail::raw("Your MFA code is: {$code}", function ($message) use ($user) {
+                $message->to($user->email)->subject('Your MFA Verification Code');
+            });
         });
     }
 }
