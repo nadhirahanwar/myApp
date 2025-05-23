@@ -85,6 +85,8 @@
 ### 6. Edit Profile Page
 ![EditProfile](public/images/editprofile.png)
 
+---
+
 # Assignment 2
 ### Enhancements
 
@@ -161,6 +163,10 @@
 ![Verify](public/images/verify.png)
 
 
+
+---
+
+
 ## Assignment 3
 
 ### Enhancements
@@ -186,6 +192,7 @@
   * **`UserRoles`**: Stores the roles assigned to users (e.g., Admin, User).
   * **`RolePermissions`**: Defines the actions (CRUD) that each role can perform (Create, Retrieve, Update, Delete).
 
+---
 
 #### 2. Authorization Layer
 
@@ -199,6 +206,7 @@
 * Added an **authorization middleware** that checks if the user has the required role before allowing access to certain pages.
 * **Redirect Logic**: Registered users are redirected to the **To-Do page**, while administrators are redirected to the **admin dashboard**.
 
+---
 
 #### 3. User Permissions
 
@@ -215,6 +223,7 @@
   * User activation/deactivation
 * **User roles and permissions** ensure that normal users only have access to their **To-Do list** and cannot modify other users' tasks or data.
 
+---
 
 #### 4. Testing RBAC
 
@@ -226,4 +235,6 @@
 **Enhancements:**
 
 * **RBAC Testing**: If a user has permission to create a To-Do list, they can only see the **"New List"** or **"New Task"** buttons, while other operation buttons are hidden based on the permissions granted.
+
+---
 
