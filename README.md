@@ -160,6 +160,65 @@
 ### 1. Verify MFA
 ![Verify](public/images/verify.png)
 
+# Assignment 3
+### Enhancements
+1. Role-Based Access Control (RBAC)
+Files modified/created:
 
+'app/Models/User.php'
+'app/Http/Controllers/ProfileController.php'
+'app/Models/UserRole.php'
+'app/Models/RolePermission.php'
+'database/migrations/2025_05_23_070905_create_user_roles_table.php'
+'database/migrations/2025_05_23_071044_create_roles_table.php'
+'database/migrations/2025_05_23_090723_create_user_roles_permissions_table.php'
+'routes/web.php'
+
+### Enhancements:
+
+Implemented Role-Based Access Control (RBAC) to manage access to different pages and actions based on user roles.
+
+Created tables:
+
+UserRoles: Stores the roles assigned to users (e.g., Admin, User).
+
+RolePermissions: Defines the actions (CRUD) that each role can perform.
+
+2. Authorization Layer
+Files modified:
+
+app/Http/Middleware/AuthorizeRole.php
+
+routes/web.php
+
+Enhancements:
+
+Added an authorization middleware that checks if the user has the required role before allowing access to certain pages.
+
+Redirect Logic: Registered users are redirected to the To-Do page, while administrators are redirected to the admin dashboard.
+
+3. User Permissions
+Files modified/created:
+
+app/Http/Controllers/AdminController.php
+
+resources/views/admin/user-list.blade.php
+
+Enhancements:
+
+Admin users have access to CRUD operations on the User list, including user deletion, activation, and deactivation.
+
+User roles and permissions ensure that normal users only have access to the To-Do list and cannot modify other users' tasks or data.
+
+4. Testing RBAC
+Files modified/created:
+
+app/Http/Controllers/TodoController.php
+
+resources/views/todo/create.blade.php
+
+Enhancements:
+
+RBAC Testing: If a user has permission to create a To-Do list, they can only see the "New List" or "New Task" buttons, while other operation buttons are hidden.
 
 
