@@ -224,17 +224,3 @@
 * **User roles and permissions** ensure that normal users only have access to their **To-Do list** and cannot modify other users' tasks or data.
 
 ---
-
-#### 4. Testing RBAC
-
-**Files modified/created:**
-
-* `app/Http/Controllers/TodoController.php`
-* `resources/views/todo/create.blade.php`
-
-**Enhancements:**
-
-* **RBAC Testing**: If a user has permission to create a To-Do list, they can only see the **"New List"** or **"New Task"** buttons, while other operation buttons are hidden based on the permissions granted.
-
----
-
