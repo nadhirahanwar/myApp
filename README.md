@@ -160,65 +160,70 @@
 ### 1. Verify MFA
 ![Verify](public/images/verify.png)
 
-# Assignment 3
+
+## Assignment 3
+
 ### Enhancements
-1. Role-Based Access Control (RBAC)
-Files modified/created:
 
-'app/Models/User.php'
-'app/Http/Controllers/ProfileController.php'
-'app/Models/UserRole.php'
-'app/Models/RolePermission.php'
-'database/migrations/2025_05_23_070905_create_user_roles_table.php'
-'database/migrations/2025_05_23_071044_create_roles_table.php'
-'database/migrations/2025_05_23_090723_create_user_roles_permissions_table.php'
-'routes/web.php'
+#### 1. Role-Based Access Control (RBAC)
 
-### Enhancements:
+**Files modified/created:**
 
-Implemented Role-Based Access Control (RBAC) to manage access to different pages and actions based on user roles.
+* `app/Models/User.php`
+* `app/Http/Controllers/ProfileController.php`
+* `app/Models/UserRole.php`
+* `app/Models/RolePermission.php`
+* `database/migrations/2025_05_23_070905_create_user_roles_table.php`
+* `database/migrations/2025_05_23_071044_create_roles_table.php`
+* `database/migrations/2025_05_23_090723_create_user_roles_permissions_table.php`
+* `routes/web.php`
 
-Created tables:
+**Enhancements:**
 
-UserRoles: Stores the roles assigned to users (e.g., Admin, User).
+* Implemented **Role-Based Access Control (RBAC)** to manage access to different pages and actions based on user roles (e.g., Admin, User).
+* Created tables:
 
-RolePermissions: Defines the actions (CRUD) that each role can perform.
+  * **`UserRoles`**: Stores the roles assigned to users (e.g., Admin, User).
+  * **`RolePermissions`**: Defines the actions (CRUD) that each role can perform (Create, Retrieve, Update, Delete).
 
-2. Authorization Layer
-Files modified:
 
-app/Http/Middleware/AuthorizeRole.php
+#### 2. Authorization Layer
 
-routes/web.php
+**Files modified:**
 
-Enhancements:
+* `app/Http/Middleware/AuthorizeRole.php`
+* `routes/web.php`
 
-Added an authorization middleware that checks if the user has the required role before allowing access to certain pages.
+**Enhancements:**
 
-Redirect Logic: Registered users are redirected to the To-Do page, while administrators are redirected to the admin dashboard.
+* Added an **authorization middleware** that checks if the user has the required role before allowing access to certain pages.
+* **Redirect Logic**: Registered users are redirected to the **To-Do page**, while administrators are redirected to the **admin dashboard**.
 
-3. User Permissions
-Files modified/created:
 
-app/Http/Controllers/AdminController.php
+#### 3. User Permissions
 
-resources/views/admin/user-list.blade.php
+**Files modified/created:**
 
-Enhancements:
+* `app/Http/Controllers/AdminController.php`
+* `resources/views/admin/user-list.blade.php`
 
-Admin users have access to CRUD operations on the User list, including user deletion, activation, and deactivation.
+**Enhancements:**
 
-User roles and permissions ensure that normal users only have access to the To-Do list and cannot modify other users' tasks or data.
+* **Admin users** have access to **CRUD operations** on the user list, including:
 
-4. Testing RBAC
-Files modified/created:
+  * User deletion
+  * User activation/deactivation
+* **User roles and permissions** ensure that normal users only have access to their **To-Do list** and cannot modify other users' tasks or data.
 
-app/Http/Controllers/TodoController.php
 
-resources/views/todo/create.blade.php
+#### 4. Testing RBAC
 
-Enhancements:
+**Files modified/created:**
 
-RBAC Testing: If a user has permission to create a To-Do list, they can only see the "New List" or "New Task" buttons, while other operation buttons are hidden.
+* `app/Http/Controllers/TodoController.php`
+* `resources/views/todo/create.blade.php`
 
+**Enhancements:**
+
+* **RBAC Testing**: If a user has permission to create a To-Do list, they can only see the **"New List"** or **"New Task"** buttons, while other operation buttons are hidden based on the permissions granted.
 
