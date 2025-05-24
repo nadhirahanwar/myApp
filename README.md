@@ -399,7 +399,6 @@ public function permissions()
 * `roles()`: Associates a user with multiple roles via `user_roles` table.
 * `permissions()`: Retrieves all permissions granted via roles, using Laravel's `hasManyThrough` relationship.
 
----
 
 #### 2. `Role.php`
 
@@ -413,8 +412,6 @@ public function permissions()
 ```
 
 * Maps each role to its respective permissions using the `role_permissions` table.
-
----
 
 #### 3. `Permission.php`
 
