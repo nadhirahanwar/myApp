@@ -480,7 +480,7 @@ $table->unsignedBigInteger('permission_id');
 
 * `app/Http/Middleware/CheckRole.php`
 * `routes/web.php`
-* 
+
 **Enhancements made:**
 
 * Created a custom middleware `CheckRole` to restrict access to specific routes based on user roles and permissions.
