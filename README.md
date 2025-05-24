@@ -228,9 +228,55 @@
 - `app/Providers/RouteServiceProvider.php`
 - `routes/web.php`
 
-**Enhancements:**
-- Used **Laravel RateLimiter** to limit **login attempts to 3** within **a minute**.
-- After 3 failed login attempts, the user is temporarily blocked and must wait before trying again.
+---
+
+### Code Implementation Details
+
+#### 1. `RouteServiceProvider.php`
+
+* The method `configureRateLimiting()` defines a rate limiter named `login`:
+
+  ```php
+  RateLimiter::for('login', function (Request $request) {
+      $email = (string) $request->input('email', 'guest');
+      return Limit::perMinute(1)
+          ->by(Str::lower($email) . '|' . $request->ip())
+          ->attempts(3)
+          ->response(function () {
+              return response('Too many login attempts. Please try again in 60 seconds.', 429);
+          });
+  });
+  ```
+
+* This configuration:
+
+  * Identifies users by their **email address and IP**.
+  * Allows **3 attempts per minute**.
+  * Returns a custom error response if the threshold is exceeded.
+
+* Additionally, a custom `role` middleware is registered for role-based routing, though unrelated to rate limiting.
+
+#### 2. `web.php`
+
+* The login route is protected with the `throttle:login` middleware:
+
+  ```php
+  Route::post('login', [LoginController::class, 'login'])->middleware('throttle:login');
+  ```
+* This ensures the limiter defined in `RouteServiceProvider` is enforced on login submissions.
+
+---
+
+### Sequence of Execution
+
+1. User submits a login form.
+2. System checks if the number of attempts from that email and IP is within the allowed limit.
+3. If within limit:
+
+   * Proceed with normal login logic.
+4. If limit is exceeded:
+
+   * Return a `429` response with a message indicating to wait 60 seconds.
   
 ---
 
