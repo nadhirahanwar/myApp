@@ -193,18 +193,16 @@
 
 #### 2. `User.php`
 
-* The `salt` field is assumed to be stored in the `users` table (this must be added via migration).
-* The `password` field is cast as `hashed`, but this is bypassed by manually calling `Hash::make()` after salting.
+* The `salt` field is assumed to be stored in the `users` table.
+* The `password` field is `hashed`, but this is bypassed by manually calling `Hash::make()` after salting.
 * Ensures sensitive fields (`password`, `remember_token`) are hidden from JSON responses.
 
 #### 3. `config/hashing.php`
 
-* The default hashing driver is set to `argon` via `.env`, but Bcrypt is still explicitly used in the `CreateNewUser` class:
-
   ```php
   Hash::make($combinedPassword)
   ```
-* Bcrypt configuration (if needed) is available under the `'bcrypt'` key (e.g., `'rounds' => 10`).
+* Bcrypt configuration is available under the `'bcrypt'` key (e.g., `'rounds' => 10`).
 
 
 ### Sequence of Execution
@@ -245,9 +243,7 @@
 
   * Identifies users by their **email address and IP**.
   * Allows **3 attempts per minute**.
-  * Returns a custom error response if the threshold is exceeded.
-
-* Additionally, a custom `role` middleware is registered for role-based routing, though unrelated to rate limiting.
+  * Returns an error response if exceeded.
 
 #### 2. `web.php`
 
@@ -280,7 +276,6 @@
 **Enhancements made:**
 - Added **salts** for passwords during user registration.
 - A **random alphanumeric salt** is generated for each user and stored in the `users` table.
-- The password is concatenated with the salt before being hashed using **Bcrypt**.
 
 ---
 
@@ -308,7 +303,7 @@ Route::get('/verify-mfa', function () {
 ```
 
 * Returns the `verify-mfa.blade.php` view.
-* Only accessible to unauthenticated users (e.g., after logout for MFA).
+* Only accessible to unauthenticated users.
 
 #### 2. **Verify Submitted MFA Code**
 
@@ -345,8 +340,6 @@ Route::post('/resend-mfa', function () {
 * Retrieves the user from the session.
 * Generates a new 6-digit code.
 * Updates the expiration timestamp (10 minutes).
-* Sends the code via `Mail::raw(...)`.
-* Displays a status message confirming the new code was sent.
 
 #### 4. **Login Route Throttling**
 
