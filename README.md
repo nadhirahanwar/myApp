@@ -396,7 +396,7 @@ public function permissions()
 }
 ```
 
-* `roles()`: Associates a user with multiple roles via `user_roles` pivot table.
+* `roles()`: Associates a user with multiple roles via `user_roles` table.
 * `permissions()`: Retrieves all permissions granted via roles, using Laravel's `hasManyThrough` relationship.
 
 ---
@@ -412,7 +412,7 @@ public function permissions()
 }
 ```
 
-* Maps each role to its respective permissions using the `role_permissions` pivot table.
+* Maps each role to its respective permissions using the `role_permissions` table.
 
 ---
 
@@ -427,11 +427,7 @@ public function roles()
 }
 ```
 
-* Allows permission lookup across associated roles.
-
----
-
-### Migration Structure
+### Migration 
 
 #### a) `roles` table
 
@@ -444,11 +440,7 @@ $table->string('description')->nullable();
 
 * Example entries: `Admin`, `User`, with optional descriptions.
 
----
-
-#### b) `user_roles` table (Missing Columns)
-
-The migration you provided lacks `user_id` and `role_id` columns. For full functionality, update it as follows:
+#### b) `user_roles` table 
 
 ```php
 Schema::create('user_roles', function (Blueprint $table) {
@@ -462,11 +454,9 @@ Schema::create('user_roles', function (Blueprint $table) {
 });
 ```
 
----
-
 #### c) `role_permissions` table
 
-Defines CRUD permission relationships for each role.
+CRUD permission relationships for each role.
 
 ```php
 $table->unsignedBigInteger('role_id');
@@ -474,10 +464,10 @@ $table->unsignedBigInteger('permission_id');
 ```
 
 * Foreign keys enforce referential integrity.
-* Each role can be granted specific operations (e.g., Create, Update).
+* Each role can be granted specific operations (example: Create, Update).
 
 
-### Flow 
+### Sequence 
 1. When a user logs in, their roles are fetched via `roles()`.
 2. Each role’s permissions are retrieved via `permissions()`.
 3. Logic within the controllers or middleware can now determine:
