@@ -99,10 +99,6 @@
 
 ---
 
-This enhancement adds a second layer of security to user login via email-based Multi-Factor Authentication (MFA). Upon successful login with credentials, users are required to enter a verification code sent to their email. The code expires after 10 minutes.
-
----
-
 ### Code Implementation Details
 
 #### 1. `LoginController.php`
@@ -167,10 +163,63 @@ This enhancement adds a second layer of security to user login via email-based M
 - `config/hashing.php`
 - `app/Actions/Fortify/CreateNewUser.php`
 
-**Enhancements:**
-- Implemented **password hashing** using **Bcrypt**.
-- **Salts** are generated for each password during registration and stored in the `users` table.
-- The password and salt are concatenated and then hashed to provide an extra layer of security.
+---
+
+### Code Implementation Details
+
+#### 1. `CreateNewUser.php`
+
+* **Validation:** Input fields (`name`, `email`, `password`) are validated using Laravel’s built-in rules.
+
+* **Salt Generation:**
+
+  ```php
+  $salt = Str::random(16);
+  ```
+
+  * A random 16-character string is generated for each user.
+
+* **Password Hashing:**
+
+  ```php
+  $combinedPassword = $salt . $input['password'];
+  $hashedPassword = Hash::make($combinedPassword);
+  ```
+
+  * Password is concatenated with the salt before being passed to Laravel’s `Hash::make()` which uses Bcrypt.
+
+* **User Creation:**
+
+  ```php
+  return User::create([...]);
+  ```
+
+  * Stores the salt and hashed password in the database.
+
+#### 2. `User.php`
+
+* The `salt` field is assumed to be stored in the `users` table (this must be added via migration).
+* The `password` field is cast as `hashed`, but this is bypassed by manually calling `Hash::make()` after salting.
+* Ensures sensitive fields (`password`, `remember_token`) are hidden from JSON responses.
+
+#### 3. `config/hashing.php`
+
+* The default hashing driver is set to `argon` via `.env`, but Bcrypt is still explicitly used in the `CreateNewUser` class:
+
+  ```php
+  Hash::make($combinedPassword)
+  ```
+* Bcrypt configuration (if needed) is available under the `'bcrypt'` key (e.g., `'rounds' => 10`).
+
+---
+
+### Sequence of Execution
+
+1. User submits registration form.
+2. System validates all required fields.
+3. A unique salt is generated and combined with the plaintext password.
+4. The combined string is hashed using Bcrypt.
+5. Salt and hashed password are stored in the database.
 
 ---
 
