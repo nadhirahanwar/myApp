@@ -7,7 +7,7 @@
 - `app/Models/User.php`
 - `database/migrations/2025_04_18_045321_add_profile_fields_to_users_table.php`
 
-**Enhancements:**
+**Enhancements made:**
 - Added new fields to the `users` table:
   - `nickname`
   - `avatar`
@@ -25,7 +25,7 @@
 - `resources/views/auth/register.blade.php`
 - `resources/views/auth/login.blade.php`
 
-**Enhancements:**
+**Enhancements made:**
 - `profile.blade.php`:
   - View mode shows user info: nickname, email, phone, city, avatar
   - Edit mode allows updating info and uploading avatar
@@ -44,7 +44,7 @@
 - `app/Http/Controllers/ProfileController.php`
 - `routes/web.php`
 
-**Enhancements:**
+**Enhancements made:**
 - Created `ProfileController` with methods:
   - `show`, `edit`, `update`, and `destroy`
 - Routes added to `web.php` to handle profile viewing, updating, and deleting:
@@ -60,7 +60,7 @@
 - `app/Http/Requests/RegisterRequest.php`
 - `app/Http/Requests/LoginRequest.php`
 
-**Enhancements:**
+**Enhancements made:**
 - Registration and login fields validated using Laravel Form Request classes
 - Name fields validated using regex to allow only A–Z and a–z characters
 
@@ -89,7 +89,6 @@
 
 # Assignment 2
 ### Enhancements
-
 #### 1. Multi-Factor Authentication (MFA)
 **Files modified/created:**
 - `app/Http/Controllers/Auth/LoginController.php`
@@ -98,11 +97,67 @@
 - `routes/web.php`
 - `app/Actions/Fortify/CreateNewUser.php`
 
-**Enhancements:**
-- Integrated **Multi-Factor Authentication (MFA)** using the **Laravel Fortify** package.
-- The user is required to verify through link sent to their email after they successfully log in with their username and password.
-- The code expires after **10 minutes**.
-- Added a **resend MFA link**.
+---
+
+This enhancement adds a second layer of security to user login via email-based Multi-Factor Authentication (MFA). Upon successful login with credentials, users are required to enter a verification code sent to their email. The code expires after 10 minutes.
+
+---
+
+### Code Implementation Details
+
+#### 1. `LoginController.php`
+
+* **Input validation** is performed on email and password.
+* The system retrieves the user based on email and verifies the password using:
+
+  ```php
+  Hash::check($user->salt . $request->password, $user->password)
+  ```
+* Upon successful credential match:
+
+  * A 6-digit random code is generated and stored in `two_factor_code`.
+  * An expiry timestamp (`two_factor_expires_at`) is set to 10 minutes.
+  * The code is emailed to the user.
+  * The user is temporarily logged out and their ID stored in session.
+  * Redirects to `/verify-mfa` for verification.
+
+#### 2. `User.php`
+
+* Implements `MustVerifyEmail` to require email verification.
+* Defines `two_factor_expires_at` as a date attribute.
+* Uses standard Laravel `$fillable`, `$hidden`, and `$casts` properties.
+* Includes role and permission relationships for future access control.
+
+#### 3. `verify-mfa.blade.php`
+
+* A Blade view that renders a form for users to input their MFA code.
+* Includes a button to resend the verification code.
+* Submits the code via `POST` to `route('mfa.verify')`.
+
+#### 4. `web.php`
+
+* Defines routes for:
+
+  * `GET /verify-mfa` – displays the MFA form.
+  * `POST /verify-mfa` – validates the code and logs in the user.
+  * `POST /resend-mfa` – regenerates and emails a new code.
+* MFA code is considered valid if it matches and has not expired:
+
+  ```php
+  $user->two_factor_code === $request->code &&
+  now()->lte($user->two_factor_expires_at)
+  ```
+
+---
+
+### Sequence of Execution
+
+1. User submits login form.
+2. If credentials are correct, the MFA code is generated and emailed.
+3. User is redirected to `/verify-mfa`.
+4. User inputs code.
+5. If valid and not expired, they are authenticated and redirected to `/home`.
+6. If invalid or expired, user may request a new code.
 
 ---
 
