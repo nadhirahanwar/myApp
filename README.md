@@ -277,7 +277,7 @@
 - `app/Models/User.php`
 - `app/Actions/Fortify/CreateNewUser.php`
 
-**Enhancements:**
+**Enhancements made:**
 - Added **salts** for passwords during user registration.
 - A **random alphanumeric salt** is generated for each user and stored in the `users` table.
 - The password is concatenated with the salt before being hashed using **Bcrypt**.
@@ -288,7 +288,7 @@
 **Files created/modified:**
 - `resources/views/auth/verify-mfa.blade.php`
 
-**Enhancements:**
+**Enhancements made:**
 - Created a **view for MFA verification**, where the user see after they logim.
 
 ---
