@@ -304,14 +304,83 @@
 ### 6. Routes for MFA and Login
 **Files modified:**
 - `routes/web.php`
+Here is the **README explanation for Enhancement 6: Routes for MFA and Login**, presented in a formal, structured format:
 
-**Enhancements:**
-- Created routes for **MFA verification**, **resending MFA codes**, and **updating user credentials after MFA verification**.
+---
+
+## Enhancement 6: Routes for MFA and Login
+
+**Files Modified:**
+
+* `routes/web.php`
+
+---
+
+### Route Implementation Details
+
+#### 1. **Display MFA Verification Form**
+
+```php
+Route::get('/verify-mfa', function () {
+    return view('auth.verify-mfa');
+})->middleware('guest')->name('mfa.verify');
+```
+
+* Returns the `verify-mfa.blade.php` view.
+* Only accessible to unauthenticated users (e.g., after logout for MFA).
+
+#### 2. **Verify Submitted MFA Code**
+
+```php
+Route::post('/verify-mfa', function (Request $request) {
+    ...
+});
+```
+
+* Validates the `code` input:
+
+  ```php
+  $request->validate(['code' => 'required|string']);
+  ```
+* Finds the user via `pending_mfa_user_id` from the session.
+* Checks for:
+
+  * Correct code match.
+  * Code expiration (`two_factor_expires_at`).
+* If valid:
+
+  * Clears the code and timestamp.
+  * Logs the user in via `auth()->login($user)`.
+  * Redirects to `/home`.
+
+#### 3. **Resend MFA Code**
+
+```php
+Route::post('/resend-mfa', function () {
+    ...
+});
+```
+
+* Retrieves the user from the session.
+* Generates a new 6-digit code.
+* Updates the expiration timestamp (10 minutes).
+* Sends the code via `Mail::raw(...)`.
+* Displays a status message confirming the new code was sent.
+
+#### 4. **Login Route Throttling**
+
+```php
+Route::post('login', [LoginController::class, 'login'])->middleware('throttle:login');
+```
+
+* Adds rate limiting (configured in `RouteServiceProvider`) to prevent abuse by limiting login attempts.
+
+
+---
 
 ## Screenshots
 ### 1. Verify MFA
 ![Verify](public/images/verify.png)
-
 
 
 ---
