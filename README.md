@@ -97,8 +97,6 @@
 - `routes/web.php`
 - `app/Actions/Fortify/CreateNewUser.php`
 
----
-
 ### Code Implementation Details
 
 #### 1. `LoginController.php`
@@ -144,8 +142,6 @@
   now()->lte($user->two_factor_expires_at)
   ```
 
----
-
 ### Sequence of Execution
 
 1. User submits login form.
@@ -163,7 +159,6 @@
 - `config/hashing.php`
 - `app/Actions/Fortify/CreateNewUser.php`
 
----
 
 ### Code Implementation Details
 
@@ -211,7 +206,6 @@
   ```
 * Bcrypt configuration (if needed) is available under the `'bcrypt'` key (e.g., `'rounds' => 10`).
 
----
 
 ### Sequence of Execution
 
@@ -228,7 +222,6 @@
 - `app/Providers/RouteServiceProvider.php`
 - `routes/web.php`
 
----
 
 ### Code Implementation Details
 
@@ -265,7 +258,6 @@
   ```
 * This ensures the limiter defined in `RouteServiceProvider` is enforced on login submissions.
 
----
 
 ### Sequence of Execution
 
@@ -304,17 +296,6 @@
 ### 6. Routes for MFA and Login
 **Files modified:**
 - `routes/web.php`
-Here is the **README explanation for Enhancement 6: Routes for MFA and Login**, presented in a formal, structured format:
-
----
-
-## Enhancement 6: Routes for MFA and Login
-
-**Files Modified:**
-
-* `routes/web.php`
-
----
 
 ### Route Implementation Details
 
@@ -374,7 +355,6 @@ Route::post('login', [LoginController::class, 'login'])->middleware('throttle:lo
 ```
 
 * Adds rate limiting (configured in `RouteServiceProvider`) to prevent abuse by limiting login attempts.
-
 
 ---
 
