@@ -478,29 +478,15 @@ $table->unsignedBigInteger('permission_id');
 
 **Files modified:**
 
-* `app/Http/Middleware/AuthorizeRole.php`
+* `app/Http/Middleware/CheckRole.php`
 * `routes/web.php`
+* 
+**Enhancements made:**
 
-**Enhancements:**
-
-* Added an **authorization middleware** that checks if the user has the required role before allowing access to certain pages.
-* **Redirect Logic**: Registered users are redirected to the **To-Do page**, while administrators are redirected to the **admin dashboard**.
-
----
-
-#### 3. User Permissions
-
-**Files modified/created:**
-
-* `app/Http/Controllers/AdminController.php`
-* `resources/views/admin/user-list.blade.php`
-
-**Enhancements:**
-
-* **Admin users** have access to **CRUD operations** on the user list, including:
-
-  * User deletion
-  * User activation/deactivation
-* **User roles and permissions** ensure that normal users only have access to their **To-Do list** and cannot modify other users' tasks or data.
+* Created a custom middleware `CheckRole` to restrict access to specific routes based on user roles and permissions.
+* The middleware performs the following checks:
+  * Verifies whether the authenticated user has the required role (e.g., `Admin`, `User`).
+  * Optionally checks if the user has a specific permission (e.g., `Create`, `Update`, `Delete`) when specified.
+* Unauthorized users are redirected to `/home` with an appropriate error message.
 
 ---
