@@ -367,29 +367,123 @@ Route::post('login', [LoginController::class, 'login'])->middleware('throttle:lo
 
 
 ## Assignment 3
-
 ### Enhancements
-
 #### 1. Role-Based Access Control (RBAC)
 
 **Files modified/created:**
-
 * `app/Models/User.php`
-* `app/Http/Controllers/ProfileController.php`
-* `app/Models/UserRole.php`
-* `app/Models/RolePermission.php`
-* `database/migrations/2025_05_23_070905_create_user_roles_table.php`
-* `database/migrations/2025_05_23_071044_create_roles_table.php`
-* `database/migrations/2025_05_23_090723_create_user_roles_permissions_table.php`
-* `routes/web.php`
+* `app/Models/Role.php`
+* `app/Models/Permission.php`
+* `database/migrations/create_roles_table.php`
+* `database/migrations/create_user_roles_table.php`
+* `database/migrations/create_role_permissions_table.php`
 
-**Enhancements:**
+### Code Implementation Details
 
-* Implemented **Role-Based Access Control (RBAC)** to manage access to different pages and actions based on user roles (e.g., Admin, User).
-* Created tables:
+#### 1. `User.php`
 
-  * **`UserRoles`**: Stores the roles assigned to users (e.g., Admin, User).
-  * **`RolePermissions`**: Defines the actions (CRUD) that each role can perform (Create, Retrieve, Update, Delete).
+Defines relationships:
+
+```php
+public function roles()
+{
+    return $this->belongsToMany(Role::class, 'user_roles', 'user_id', 'role_id');
+}
+
+public function permissions()
+{
+    return $this->hasManyThrough(Permission::class, Role::class, 'role_id', 'permission_id');
+}
+```
+
+* `roles()`: Associates a user with multiple roles via `user_roles` pivot table.
+* `permissions()`: Retrieves all permissions granted via roles, using Laravel's `hasManyThrough` relationship.
+
+---
+
+#### 2. `Role.php`
+
+Defines relationship:
+
+```php
+public function permissions()
+{
+    return $this->belongsToMany(Permission::class, 'role_permissions');
+}
+```
+
+* Maps each role to its respective permissions using the `role_permissions` pivot table.
+
+---
+
+#### 3. `Permission.php`
+
+Defines inverse relationship:
+
+```php
+public function roles()
+{
+    return $this->belongsToMany(Role::class, 'role_permissions');
+}
+```
+
+* Allows permission lookup across associated roles.
+
+---
+
+### Migration Structure
+
+#### a) `roles` table
+
+Stores predefined roles.
+
+```php
+$table->string('role_name');
+$table->string('description')->nullable();
+```
+
+* Example entries: `Admin`, `User`, with optional descriptions.
+
+---
+
+#### b) `user_roles` table (Missing Columns)
+
+The migration you provided lacks `user_id` and `role_id` columns. For full functionality, update it as follows:
+
+```php
+Schema::create('user_roles', function (Blueprint $table) {
+    $table->id();
+    $table->unsignedBigInteger('user_id');
+    $table->unsignedBigInteger('role_id');
+    $table->timestamps();
+
+    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+    $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+});
+```
+
+---
+
+#### c) `role_permissions` table
+
+Defines CRUD permission relationships for each role.
+
+```php
+$table->unsignedBigInteger('role_id');
+$table->unsignedBigInteger('permission_id');
+```
+
+* Foreign keys enforce referential integrity.
+* Each role can be granted specific operations (e.g., Create, Update).
+
+
+### Flow 
+1. When a user logs in, their roles are fetched via `roles()`.
+2. Each role’s permissions are retrieved via `permissions()`.
+3. Logic within the controllers or middleware can now determine:
+
+   * What actions to show or hide.
+   * What views or routes the user can access.
 
 ---
 
