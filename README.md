@@ -549,7 +549,7 @@ protected $middleware = [
 ---
 ### 2. XSS (Cross-Site Scripting) Defense
 ### XSS Code Implementation
-### 1. Output Encoding via Blade
+#### 1. Output Encoding via Blade
 
 **File(s):**
 
@@ -568,7 +568,7 @@ All user-generated content displayed in Blade views uses the `{{ }}` syntax. Thi
 
 ---
 
-### 2. Input Validation with Regular Expressions
+#### 2. Input Validation with Regular Expressions
 
 **File:**
 
@@ -585,7 +585,7 @@ Input fields like `name` are validated to only accept alphabetic characters. Thi
 
 ---
 
-### 3. HttpOnly Cookies
+#### 3. HttpOnly Cookies
 
 **File:**
 
