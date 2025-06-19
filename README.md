@@ -485,44 +485,65 @@ $table->unsignedBigInteger('permission_id');
 ---
 # Assignment 4
 #### 1. Content Security Policy (CSP)
-### How I Implemented the CSP
+### CSP Code Implementation
 
-1. **Custom Middleware**
+#### 1. Middleware Creation
 
-   * File: `app/Http/Middleware/ContentSecurityPolicy.php`
-   * This middleware sets strict CSP headers on all HTTP responses.
+A middleware named `ContentSecurityPolicy` was created using the following Artisan command:
 
-2. **CSP Header Configuration**
-
-The following policy was applied:
-
-```php
-$response->headers->set('Content-Security-Policy',
-    "default-src 'self'; " .
-    "img-src 'self' data: https://trusted-image-cdn.com; " .
-    "style-src 'self' 'unsafe-inline' https://fonts.bunny.net; " .
-    "font-src 'self' https://fonts.bunny.net; " .
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " .
-    "object-src 'none';"
-);
+```
+php artisan make:middleware ContentSecurityPolicy
 ```
 
-3. **Middleware Registration**
+This generated a middleware file:
 
-   * The middleware is registered in the global middleware stack in `app/Http/Kernel.php`:
+```
+app/Http/Middleware/ContentSecurityPolicy.php
+```
+
+#### 2. Middleware Logic
+
+The middleware uses Laravel's `$response->headers->set()` method to apply the `Content-Security-Policy` header to every HTTP response:
+
+```php
+public function handle(Request $request, Closure $next)
+{
+    $response = $next($request);
+
+    $csp = "default-src 'self'; " .
+           "img-src 'self' data: https://trusted-image-cdn.com; " .
+           "style-src 'self' 'unsafe-inline' https://fonts.bunny.net; " .
+           "font-src 'self' https://fonts.bunny.net; " .
+           "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " .
+           "object-src 'none';";
+
+    $response->headers->set('Content-Security-Policy', $csp);
+
+    return $response;
+}
+```
+
+**Explanation of each directive:**
+
+| Directive                                                  | Purpose                                                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `default-src 'self'`                                       | Only allow content from the same origin (your app)                                        |
+| `img-src 'self' data: https://trusted-image-cdn.com`       | Allow images from the same origin, base64-encoded data, and a trusted image CDN           |
+| `style-src 'self' 'unsafe-inline' https://fonts.bunny.net` | Allow styles from the same origin and the Bunny fonts CDN, including inline styles        |
+| `font-src 'self' https://fonts.bunny.net`                  | Allow font files from your app and Bunny CDN                                              |
+| `script-src 'self' 'unsafe-eval' 'unsafe-inline'`          | Allow scripts from the same origin, including inline and eval scripts (used with caution) |
+| `object-src 'none'`                                        | Block use of `<object>`, `<embed>`, and similar tags completely                           |
+
+This policy limits where the browser can load content from, reducing the risk of malicious code execution.
+
+#### 3. Middleware Registration
+
+To apply the CSP globally to all incoming requests, the middleware is registered in the global middleware stack in `app/Http/Kernel.php`:
 
 ```php
 protected $middleware = [
     \App\Http\Middleware\ContentSecurityPolicy::class,
-    // other middleware...
+    // other global middleware...
 ];
 ```
-
-### Security Benefits
-
-* Prevents execution of inline scripts or scripts from untrusted sources
-* Blocks usage of unsafe objects such as `<object>` or `<embed>` tags
-* Limits the origin of styles, images, fonts, and scripts
-* Adds browser-level protection for end users even if some malicious content is injected into the view
-
 ---
