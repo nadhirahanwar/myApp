@@ -547,12 +547,8 @@ protected $middleware = [
 ];
 ```
 ---
-Here is your **XSS section for the README**, written specifically based on what **you actually implemented**:
-
----
-
-## XSS (Cross-Site Scripting) Defense – Code Explanation
-
+#### 2. XSS (Cross-Site Scripting) Defense
+### XSS Code Implementation
 ### 1. Output Encoding via Blade
 
 **File(s):**
