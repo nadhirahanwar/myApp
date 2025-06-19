@@ -612,7 +612,7 @@ This middleware checks every incoming `POST`, `PUT`, `PATCH`, and `DELETE` reque
 
 * `resources/views/profile.blade.php`
 * `resources/views/todo.blade.php`
-* Any form-based views
+* Form-based views
 
 All HTML forms include `@csrf` to automatically insert the CSRF token as a hidden input:
 
