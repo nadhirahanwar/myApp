@@ -359,7 +359,7 @@ Route::post('login', [LoginController::class, 'login'])->middleware('throttle:lo
 ---
 
 
-## Assignment 3
+# Assignment 3
 ### Enhancements
 #### 1. Role-Based Access Control (RBAC)
 
@@ -483,7 +483,7 @@ $table->unsignedBigInteger('permission_id');
 * Unauthorized users are redirected to `/home` with an appropriate error message.
 
 ---
-## Assignment 4
+# Assignment 4
 #### 1. Content Security Policy (CSP)
 To protect the application against code injection attacks such as Cross-Site Scripting (XSS) and data injection, a Content Security Policy (CSP) was implemented using Laravel middleware.
 
