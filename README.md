@@ -484,7 +484,7 @@ $table->unsignedBigInteger('permission_id');
 
 ---
 # Assignment 4
-#### 1. Content Security Policy (CSP)
+### 1. Content Security Policy (CSP)
 ### CSP Code Implementation
 
 #### 1. Middleware Creation
@@ -547,7 +547,7 @@ protected $middleware = [
 ];
 ```
 ---
-#### 2. XSS (Cross-Site Scripting) Defense
+### 2. XSS (Cross-Site Scripting) Defense
 ### XSS Code Implementation
 ### 1. Output Encoding via Blade
 
