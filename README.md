@@ -485,9 +485,7 @@ $table->unsignedBigInteger('permission_id');
 ---
 # Assignment 4
 #### 1. Content Security Policy (CSP)
-To protect the application against code injection attacks such as Cross-Site Scripting (XSS) and data injection, a Content Security Policy (CSP) was implemented using Laravel middleware.
-
-### How CSP is Implemented
+### How I Implemented the CSP
 
 1. **Custom Middleware**
 
