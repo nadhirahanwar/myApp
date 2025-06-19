@@ -483,3 +483,48 @@ $table->unsignedBigInteger('permission_id');
 * Unauthorized users are redirected to `/home` with an appropriate error message.
 
 ---
+## Assignment 4
+#### 1. Content Security Policy (CSP)
+To protect the application against code injection attacks such as Cross-Site Scripting (XSS) and data injection, a Content Security Policy (CSP) was implemented using Laravel middleware.
+
+### How CSP is Implemented
+
+1. **Custom Middleware**
+
+   * File: `app/Http/Middleware/ContentSecurityPolicy.php`
+   * This middleware sets strict CSP headers on all HTTP responses.
+
+2. **CSP Header Configuration**
+
+The following policy was applied:
+
+```php
+$response->headers->set('Content-Security-Policy',
+    "default-src 'self'; " .
+    "img-src 'self' data: https://trusted-image-cdn.com; " .
+    "style-src 'self' 'unsafe-inline' https://fonts.bunny.net; " .
+    "font-src 'self' https://fonts.bunny.net; " .
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " .
+    "object-src 'none';"
+);
+```
+
+3. **Middleware Registration**
+
+   * The middleware is registered in the global middleware stack in `app/Http/Kernel.php`:
+
+```php
+protected $middleware = [
+    \App\Http\Middleware\ContentSecurityPolicy::class,
+    // other middleware...
+];
+```
+
+### Security Benefits
+
+* Prevents execution of inline scripts or scripts from untrusted sources
+* Blocks usage of unsafe objects such as `<object>` or `<embed>` tags
+* Limits the origin of styles, images, fonts, and scripts
+* Adds browser-level protection for end users even if some malicious content is injected into the view
+
+---
