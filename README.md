@@ -487,23 +487,19 @@ $table->unsignedBigInteger('permission_id');
 ### 1. Content Security Policy (CSP)
 ### CSP Code Implementation
 
-#### 1. Middleware Creation
-
-A middleware named `ContentSecurityPolicy` was created using the following Artisan command:
+I Created a middleware named `ContentSecurityPolicy` using command:
 
 ```
 php artisan make:middleware ContentSecurityPolicy
 ```
 
-This generated a middleware file:
+Created a middleware file:
 
 ```
 app/Http/Middleware/ContentSecurityPolicy.php
 ```
 
-#### 2. Middleware Logic
-
-The middleware uses Laravel's `$response->headers->set()` method to apply the `Content-Security-Policy` header to every HTTP response:
+Middleware uses Laravel's `$response->headers->set()` method to apply the `Content-Security-Policy` header to every HTTP response:
 
 ```php
 public function handle(Request $request, Closure $next)
@@ -536,9 +532,7 @@ public function handle(Request $request, Closure $next)
 
 This policy limits where the browser can load content from, reducing the risk of malicious code execution.
 
-#### 3. Middleware Registration
-
-To apply the CSP globally to all incoming requests, the middleware is registered in the global middleware stack in `app/Http/Kernel.php`:
+Apply the CSP globally to all incoming requests, the middleware is registered in the global middleware stack in `app/Http/Kernel.php`:
 
 ```php
 protected $middleware = [
@@ -549,14 +543,7 @@ protected $middleware = [
 ---
 ### 2. XSS (Cross-Site Scripting) Defense
 ### XSS Code Implementation
-#### 1. Output Encoding via Blade
-
-**File(s):**
-
-* `resources/views/profile.blade.php`
-* `resources/views/todo.blade.php`
-* Other relevant views
-
+#### 1. Output Encoding in Blade
 **Code Used:**
 
 ```blade
