@@ -678,14 +678,3 @@ To allow secure AJAX requests, I included the CSRF token in a meta tag:
 JavaScript can then read this token and attach it to headers for safe POST requests.
 
 ---
-
-### Summary of Code Changes
-
-| File                                    | Code                         | Purpose                             |
-| --------------------------------------- | ---------------------------- | ----------------------------------- |
-| `Kernel.php`                            | Registered `VerifyCsrfToken` | Activates Laravel's CSRF protection |
-| Blade views (e.g., `profile.blade.php`) | `@csrf` in all forms         | Inserts CSRF token in requests      |
-| `VerifyCsrfToken.php`                   | No exceptions defined        | Ensures all routes are protected    |
-| `layouts/app.blade.php`                 | Meta tag with CSRF token     | Enables token use in AJAX requests  |
-
----
