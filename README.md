@@ -547,3 +547,61 @@ protected $middleware = [
 ];
 ```
 ---
+Here is your **XSS section for the README**, written specifically based on what **you actually implemented**:
+
+---
+
+## XSS (Cross-Site Scripting) Defense – Code Explanation
+
+### 1. Output Encoding via Blade
+
+**File(s):**
+
+* `resources/views/profile.blade.php`
+* `resources/views/todo.blade.php`
+* Other relevant views
+
+**Code Used:**
+
+```blade
+{{ $user->nickname }}
+```
+
+**Explanation:**
+All user-generated content displayed in Blade views uses the `{{ }}` syntax. This ensures the output is HTML-escaped and prevents script injection like `<script>alert(1)</script>`. Blade escapes special characters automatically.
+
+---
+
+### 2. Input Validation with Regular Expressions
+
+**File:**
+
+* `app/Http/Requests/RegisterRequest.php`
+
+**Code Example:**
+
+```php
+'name' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z]+$/'],
+```
+
+**Explanation:**
+Input fields like `name` are validated to only accept alphabetic characters. This prevents malicious input such as script tags or encoded XSS payloads from being submitted through the registration form.
+
+---
+
+### 3. HttpOnly Cookies
+
+**File:**
+
+* `config/session.php`
+
+**Code Confirmed:**
+
+```php
+'http_only' => true,
+```
+
+**Explanation:**
+Laravel is configured to use `HttpOnly` cookies, which prevent JavaScript from accessing session cookies via `document.cookie`. This reduces the risk of cookie theft via XSS.
+
+---
