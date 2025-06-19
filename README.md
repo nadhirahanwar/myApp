@@ -359,7 +359,7 @@ Route::post('login', [LoginController::class, 'login'])->middleware('throttle:lo
 ---
 
 
-## Assignment 3
+# Assignment 3
 ### Enhancements
 #### 1. Role-Based Access Control (RBAC)
 
@@ -481,5 +481,200 @@ $table->unsignedBigInteger('permission_id');
   * Verifies whether the authenticated user has the required role (e.g., `Admin`, `User`).
   * Optionally checks if the user has a specific permission (e.g., `Create`, `Update`, `Delete`) when specified.
 * Unauthorized users are redirected to `/home` with an appropriate error message.
+
+---
+# Assignment 4
+### 1. Content Security Policy (CSP)
+### CSP Code Implementation
+
+#### 1. Middleware Creation
+
+A middleware named `ContentSecurityPolicy` was created using the following Artisan command:
+
+```
+php artisan make:middleware ContentSecurityPolicy
+```
+
+This generated a middleware file:
+
+```
+app/Http/Middleware/ContentSecurityPolicy.php
+```
+
+#### 2. Middleware Logic
+
+The middleware uses Laravel's `$response->headers->set()` method to apply the `Content-Security-Policy` header to every HTTP response:
+
+```php
+public function handle(Request $request, Closure $next)
+{
+    $response = $next($request);
+
+    $csp = "default-src 'self'; " .
+           "img-src 'self' data: https://trusted-image-cdn.com; " .
+           "style-src 'self' 'unsafe-inline' https://fonts.bunny.net; " .
+           "font-src 'self' https://fonts.bunny.net; " .
+           "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " .
+           "object-src 'none';";
+
+    $response->headers->set('Content-Security-Policy', $csp);
+
+    return $response;
+}
+```
+
+**Explanation of each directive:**
+
+| Directive                                                  | Purpose                                                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `default-src 'self'`                                       | Only allow content from the same origin (your app)                                        |
+| `img-src 'self' data: https://trusted-image-cdn.com`       | Allow images from the same origin, base64-encoded data, and a trusted image CDN           |
+| `style-src 'self' 'unsafe-inline' https://fonts.bunny.net` | Allow styles from the same origin and the Bunny fonts CDN, including inline styles        |
+| `font-src 'self' https://fonts.bunny.net`                  | Allow font files from your app and Bunny CDN                                              |
+| `script-src 'self' 'unsafe-eval' 'unsafe-inline'`          | Allow scripts from the same origin, including inline and eval scripts (used with caution) |
+| `object-src 'none'`                                        | Block use of `<object>`, `<embed>`, and similar tags completely                           |
+
+This policy limits where the browser can load content from, reducing the risk of malicious code execution.
+
+#### 3. Middleware Registration
+
+To apply the CSP globally to all incoming requests, the middleware is registered in the global middleware stack in `app/Http/Kernel.php`:
+
+```php
+protected $middleware = [
+    \App\Http\Middleware\ContentSecurityPolicy::class,
+    // other global middleware...
+];
+```
+---
+### 2. XSS (Cross-Site Scripting) Defense
+### XSS Code Implementation
+#### 1. Output Encoding via Blade
+
+**File(s):**
+
+* `resources/views/profile.blade.php`
+* `resources/views/todo.blade.php`
+* Other relevant views
+
+**Code Used:**
+
+```blade
+{{ $user->nickname }}
+```
+
+**Explanation:**
+All user-generated content displayed in Blade views uses the `{{ }}` syntax. This ensures the output is HTML-escaped and prevents script injection like `<script>alert(1)</script>`. Blade escapes special characters automatically.
+
+---
+
+#### 2. Input Validation with Regular Expressions
+
+**File:**
+
+* `app/Http/Requests/RegisterRequest.php`
+
+**Code Example:**
+
+```php
+'name' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z]+$/'],
+```
+
+**Explanation:**
+Input fields like `name` are validated to only accept alphabetic characters. This prevents malicious input such as script tags or encoded XSS payloads from being submitted through the registration form.
+
+---
+
+#### 3. HttpOnly Cookies
+
+**File:**
+
+* `config/session.php`
+
+**Code Confirmed:**
+
+```php
+'http_only' => true,
+```
+
+**Explanation:**
+Laravel is configured to use `HttpOnly` cookies, which prevent JavaScript from accessing session cookies via `document.cookie`. This reduces the risk of cookie theft via XSS.
+
+---
+Here's a **clear and concise README section** specifically explaining **your code** related to **CSRF implementation** in your Laravel To-Do App:
+
+---
+
+### 3. CSRF Protection Implementation
+#### 1. `VerifyCsrfToken` Middleware
+
+**File:** `app/Http/Kernel.php`
+In this file, the middleware `\App\Http\Middleware\VerifyCsrfToken::class` is already registered under the `web` group:
+
+```php
+protected $middlewareGroups = [
+    'web' => [
+        // Other middleware
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ],
+];
+```
+
+This middleware checks every incoming `POST`, `PUT`, `PATCH`, and `DELETE` request to verify that it includes a valid CSRF token.
+
+---
+
+#### 2. Blade Templates – CSRF Token Injection
+
+**Files:**
+
+* `resources/views/profile.blade.php`
+* `resources/views/todo.blade.php`
+* Any form-based views
+
+All HTML forms include `@csrf` to automatically insert the CSRF token as a hidden input:
+
+```blade
+<form method="POST" action="/todo/store">
+    @csrf
+    <!-- form fields -->
+</form>
+```
+
+This generates:
+
+```html
+<input type="hidden" name="_token" value="{{ csrf_token() }}">
+```
+
+Laravel uses this token to validate that the form was submitted from the same site.
+
+---
+
+#### 3. No CSRF Exceptions
+
+**File:** `app/Http/Middleware/VerifyCsrfToken.php`
+
+I did **not** add any routes to the `$except` array in this file. This means **every state-changing request is protected**:
+
+```php
+protected $except = [
+    // No routes excluded from CSRF validation
+];
+```
+
+---
+
+#### 4. CSRF Token for JavaScript/AJAX
+
+**File:** `resources/views/layouts/app.blade.php`
+
+To allow secure AJAX requests, I included the CSRF token in a meta tag:
+
+```blade
+<meta name="csrf-token" content="{{ csrf_token() }}">
+```
+
+JavaScript can then read this token and attach it to headers for safe POST requests.
 
 ---
