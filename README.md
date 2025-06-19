@@ -487,7 +487,7 @@ $table->unsignedBigInteger('permission_id');
 ### 1. Content Security Policy (CSP)
 ### CSP Code Implementation
 
-I Created a middleware named `ContentSecurityPolicy` using command:
+Created a middleware named `ContentSecurityPolicy` using command:
 
 ```
 php artisan make:middleware ContentSecurityPolicy
