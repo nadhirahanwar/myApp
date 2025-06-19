@@ -601,3 +601,91 @@ Input fields like `name` are validated to only accept alphabetic characters. Thi
 Laravel is configured to use `HttpOnly` cookies, which prevent JavaScript from accessing session cookies via `document.cookie`. This reduces the risk of cookie theft via XSS.
 
 ---
+Here's a **clear and concise README section** specifically explaining **your code** related to **CSRF implementation** in your Laravel To-Do App:
+
+---
+
+### 3. CSRF Protection Implementation
+#### 1. `VerifyCsrfToken` Middleware
+
+**File:** `app/Http/Kernel.php`
+In this file, the middleware `\App\Http\Middleware\VerifyCsrfToken::class` is already registered under the `web` group:
+
+```php
+protected $middlewareGroups = [
+    'web' => [
+        // Other middleware
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ],
+];
+```
+
+This middleware checks every incoming `POST`, `PUT`, `PATCH`, and `DELETE` request to verify that it includes a valid CSRF token.
+
+---
+
+#### 2. Blade Templates – CSRF Token Injection
+
+**Files:**
+
+* `resources/views/profile.blade.php`
+* `resources/views/todo.blade.php`
+* Any form-based views
+
+All HTML forms include `@csrf` to automatically insert the CSRF token as a hidden input:
+
+```blade
+<form method="POST" action="/todo/store">
+    @csrf
+    <!-- form fields -->
+</form>
+```
+
+This generates:
+
+```html
+<input type="hidden" name="_token" value="{{ csrf_token() }}">
+```
+
+Laravel uses this token to validate that the form was submitted from the same site.
+
+---
+
+#### 3. No CSRF Exceptions
+
+**File:** `app/Http/Middleware/VerifyCsrfToken.php`
+
+I did **not** add any routes to the `$except` array in this file. This means **every state-changing request is protected**:
+
+```php
+protected $except = [
+    // No routes excluded from CSRF validation
+];
+```
+
+---
+
+#### 4. CSRF Token for JavaScript/AJAX
+
+**File:** `resources/views/layouts/app.blade.php`
+
+To allow secure AJAX requests, I included the CSRF token in a meta tag:
+
+```blade
+<meta name="csrf-token" content="{{ csrf_token() }}">
+```
+
+JavaScript can then read this token and attach it to headers for safe POST requests.
+
+---
+
+### Summary of Code Changes
+
+| File                                    | Code                         | Purpose                             |
+| --------------------------------------- | ---------------------------- | ----------------------------------- |
+| `Kernel.php`                            | Registered `VerifyCsrfToken` | Activates Laravel's CSRF protection |
+| Blade views (e.g., `profile.blade.php`) | `@csrf` in all forms         | Inserts CSRF token in requests      |
+| `VerifyCsrfToken.php`                   | No exceptions defined        | Ensures all routes are protected    |
+| `layouts/app.blade.php`                 | Meta tag with CSRF token     | Enables token use in AJAX requests  |
+
+---
