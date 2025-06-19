@@ -523,11 +523,11 @@ public function handle(Request $request, Closure $next)
 
 | Directive                                                  | Purpose                                                                                   |
 | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `default-src 'self'`                                       | Only allow content from the same origin (your app)                                        |
+| `default-src 'self'`                                       | Only allow content from the same origin                                      |
 | `img-src 'self' data: https://trusted-image-cdn.com`       | Allow images from the same origin, base64-encoded data, and a trusted image CDN           |
 | `style-src 'self' 'unsafe-inline' https://fonts.bunny.net` | Allow styles from the same origin and the Bunny fonts CDN, including inline styles        |
-| `font-src 'self' https://fonts.bunny.net`                  | Allow font files from your app and Bunny CDN                                              |
-| `script-src 'self' 'unsafe-eval' 'unsafe-inline'`          | Allow scripts from the same origin, including inline and eval scripts (used with caution) |
+| `font-src 'self' https://fonts.bunny.net`                  | Allow font files from my app and Bunny CDN                                              |
+| `script-src 'self' 'unsafe-eval' 'unsafe-inline'`          | Allow scripts from the same origin, including inline and eval scripts|
 | `object-src 'none'`                                        | Block use of `<object>`, `<embed>`, and similar tags completely                           |
 
 This policy limits where the browser can load content from, reducing the risk of malicious code execution.
@@ -551,7 +551,7 @@ protected $middleware = [
 ```
 
 **Explanation:**
-All user-generated content displayed in Blade views uses the `{{ }}` syntax. This ensures the output is HTML-escaped and prevents script injection like `<script>alert(1)</script>`. Blade escapes special characters automatically.
+All user-generated content displayed in Blade views uses the `{{ }}` syntax that will ensure the output is HTML-escaped and prevents script injection. 
 
 ---
 
@@ -561,14 +561,14 @@ All user-generated content displayed in Blade views uses the `{{ }}` syntax. Thi
 
 * `app/Http/Requests/RegisterRequest.php`
 
-**Code Example:**
+**Code:**
 
 ```php
 'name' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z]+$/'],
 ```
 
 **Explanation:**
-Input fields like `name` are validated to only accept alphabetic characters. This prevents malicious input such as script tags or encoded XSS payloads from being submitted through the registration form.
+Input fields `name` are validated to only accept alphabetic characters. This prevents malicious input such as script tags or encoded XSS from being submitted through the registration form.
 
 ---
 
@@ -588,15 +588,12 @@ Input fields like `name` are validated to only accept alphabetic characters. Thi
 Laravel is configured to use `HttpOnly` cookies, which prevent JavaScript from accessing session cookies via `document.cookie`. This reduces the risk of cookie theft via XSS.
 
 ---
-Here's a **clear and concise README section** specifically explaining **your code** related to **CSRF implementation** in your Laravel To-Do App:
-
----
 
 ### 3. CSRF Protection Implementation
 #### 1. `VerifyCsrfToken` Middleware
 
 **File:** `app/Http/Kernel.php`
-In this file, the middleware `\App\Http\Middleware\VerifyCsrfToken::class` is already registered under the `web` group:
+Middleware `\App\Http\Middleware\VerifyCsrfToken::class` is registered under the `web` group:
 
 ```php
 protected $middlewareGroups = [
@@ -638,21 +635,7 @@ Laravel uses this token to validate that the form was submitted from the same si
 
 ---
 
-#### 3. No CSRF Exceptions
-
-**File:** `app/Http/Middleware/VerifyCsrfToken.php`
-
-I did **not** add any routes to the `$except` array in this file. This means **every state-changing request is protected**:
-
-```php
-protected $except = [
-    // No routes excluded from CSRF validation
-];
-```
-
----
-
-#### 4. CSRF Token for JavaScript/AJAX
+#### 3. CSRF Token for JavaScript/AJAX
 
 **File:** `resources/views/layouts/app.blade.php`
 
