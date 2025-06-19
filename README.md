@@ -537,7 +537,6 @@ Apply the CSP globally to all incoming requests, the middleware is registered in
 ```php
 protected $middleware = [
     \App\Http\Middleware\ContentSecurityPolicy::class,
-    // other global middleware...
 ];
 ```
 ---
@@ -598,7 +597,6 @@ Middleware `\App\Http\Middleware\VerifyCsrfToken::class` is registered under the
 ```php
 protected $middlewareGroups = [
     'web' => [
-        // Other middleware
         \App\Http\Middleware\VerifyCsrfToken::class,
     ],
 ];
@@ -621,7 +619,6 @@ All HTML forms include `@csrf` to automatically insert the CSRF token as a hidde
 ```blade
 <form method="POST" action="/todo/store">
     @csrf
-    <!-- form fields -->
 </form>
 ```
 
